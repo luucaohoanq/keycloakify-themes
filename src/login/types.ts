@@ -3,10 +3,10 @@ import { JSX } from "react"
 import { I18n } from "./i18n"
 import { TemplateProps } from "keycloakify/login/TemplateProps"
 
-type CustomTemplateProps = Omit<TemplateProps<KcContext, I18n>, "doUseDefaultCss" | "headerNode">
+type CustomTemplateProps<T> = Omit<TemplateProps<Extract<KcContext, { pageId: T }>, I18n>, "doUseDefaultCss" | "headerNode">
 
 type PageProps<T> = {
-    Template: (props: CustomTemplateProps) => JSX.Element,
+    Template: (props: CustomTemplateProps<T>) => JSX.Element,
     kcContext: Extract<KcContext, { pageId: T }>,
     i18n: I18n
 }

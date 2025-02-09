@@ -17,7 +17,7 @@ const Login = (props: PageProps<"login.ftl">) => {
         <form id="kc-form-login" action={url.loginAction} method="post">
           <Grid container spacing={2}>
             <Grid size={12}>
-              <TextField error={messagesPerField.existsError('username')} helperText={messagesPerField.getFirstError('username')}  fullWidth label={loginWithEmailAllowed ? msgStr('usernameOrEmail') : msgStr('username')} type={loginWithEmailAllowed ? 'email' : 'text'} name="username" id="username"></TextField>
+              <TextField error={messagesPerField.existsError('username')} helperText={messagesPerField.getFirstError('username')}  fullWidth label={loginWithEmailAllowed ? msgStr('usernameOrEmail') : msgStr('username')} name="username" id="username"></TextField>
             </Grid>
             <Grid size={12}>
               <TextField error={messagesPerField.existsError('password')} fullWidth type="password" label={msgStr('password')} name="password" id="password"></TextField>
@@ -27,7 +27,7 @@ const Login = (props: PageProps<"login.ftl">) => {
               {message && <HintBox style={{ marginTop: "10px", textAlign: "center" }} type={message?.type === 'success' ? 'info' : message.type} message={message.summary} />}
             </Grid>
           </Grid>
-          {(resetPasswordAllowed || registrationAllowed || social?.providers?.length) && (
+          {(resetPasswordAllowed || registrationAllowed || !!social?.providers?.length) && (
             <Box textAlign="center">
               <Divider sx={{ margin: "20px 0px" }}></Divider>
               {!!social?.providers?.length && (
