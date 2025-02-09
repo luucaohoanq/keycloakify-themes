@@ -1,8 +1,11 @@
 import { PageProps } from "../../types";
 import { Box, Button, CardContent, Divider, Grid2 as Grid, Link, TextField, Typography } from "@mui/material";
 import { HintBox } from "../../../components/HintBox";
+import { useState } from "react";
+import { LoadingButton } from "@mui/lab";
 
 const Login = (props: PageProps<"login.ftl">) => {
+  const [loading, setLoading] = useState(false);
   const { i18n, Template, kcContext } = props;
   const { url, realm, social, message, messagesPerField } = kcContext;
   const { loginWithEmailAllowed, resetPasswordAllowed, registrationAllowed } = realm
@@ -14,7 +17,7 @@ const Login = (props: PageProps<"login.ftl">) => {
         <Box marginBottom="20px" textAlign="center">
           <Typography variant="h4">{msgStr('doLogIn')}</Typography>
         </Box>
-        <form id="kc-form-login" action={url.loginAction} method="post">
+        <form onSubmit={() => setLoading(true)} id="kc-form-login" action={url.loginAction} method="post">
           <Grid container spacing={2}>
             <Grid size={12}>
               <TextField error={messagesPerField.existsError('username')} helperText={messagesPerField.getFirstError('username')}  fullWidth label={loginWithEmailAllowed ? msgStr('usernameOrEmail') : msgStr('username')} name="username" id="username"></TextField>
@@ -23,7 +26,7 @@ const Login = (props: PageProps<"login.ftl">) => {
               <TextField error={messagesPerField.existsError('password')} fullWidth type="password" label={msgStr('password')} name="password" id="password"></TextField>
             </Grid>
             <Grid display="flex" flexDirection="column" size={12}>
-              <Button fullWidth sx={{ marginLeft: 'auto' }} variant="contained" type="submit">{msgStr('doLogIn')}</Button>
+              <LoadingButton fullWidth variant="contained" loading={loading} type="submit">{msgStr('doLogIn')}</LoadingButton>
               {message && <HintBox style={{ marginTop: "10px", textAlign: "center" }} type={message?.type === 'success' ? 'info' : message.type} message={message.summary} />}
             </Grid>
           </Grid>
