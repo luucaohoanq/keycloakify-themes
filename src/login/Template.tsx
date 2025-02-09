@@ -1,4 +1,4 @@
-import { Box, Card, CardContent, Typography } from '@mui/material'
+import { Box, Card, Typography } from '@mui/material'
 import { CustomTemplateProps } from './types'
 import { LanguageSelect } from '../components/LanguageSelect'
 

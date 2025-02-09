@@ -1,9 +1,4 @@
-import {
-  InfoOutlined,
-  WarningAmberRounded,
-  ErrorOutlineRounded,
-} from "@mui/icons-material";
-import { Box, Typography } from "@mui/material";
+import { Typography } from "@mui/material";
 import { CSSProperties } from "react";
 
 const HintBox = ({
