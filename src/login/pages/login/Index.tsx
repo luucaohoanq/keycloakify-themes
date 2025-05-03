@@ -29,14 +29,14 @@ const Login = (props: PageProps<"login.ftl">) => {
     <Template i18n={i18n} kcContext={kcContext}>
       <Paper elevation={4}>
         <CardContent sx={{ p: 4 }}>
-          <Box mb={3} textAlign="center">
-            <Typography variant="h4" fontWeight="medium" color="primary">
+          <Box mb={3} textAlign="left">
+            <Typography variant="h5" fontWeight="medium" color="black">
               {/* {msgStr("doLogIn")} */}
-              {"Shoppe"}
+              {"Sign in"}
             </Typography>
-            <Typography variant="body2" color="text.secondary" mt={1}>
+            {/* <Typography variant="body2" color="text.secondary" mt={1}>
               {msgStr("loginAccountTitle", "Sign in to your account")}
-            </Typography>
+            </Typography> */}
           </Box>
 
           <form
@@ -76,16 +76,29 @@ const Login = (props: PageProps<"login.ftl">) => {
                 autoComplete="current-password"
               />
 
+              {/* if the validation still error then disable the button */}
+
               <LoadingButton
                 fullWidth
                 variant="contained"
                 loading={loading}
+                disabled={
+                  loading ||
+                  messagesPerField.existsError("username") ||
+                  messagesPerField.existsError("password")
+                }
                 type="submit"
                 size="large"
                 sx={{
                   mt: 1,
                   py: 1.2,
+                  backgroundColor: "#EE4D2D",
                   fontWeight: "medium",
+                  //change color button background on disable
+                  "&:disabled": {
+                    backgroundColor: "#f4826c",
+                    color: theme.palette.common.white,
+                  },
                 }}
               >
                 {msgStr("doLogIn")}
@@ -113,7 +126,7 @@ const Login = (props: PageProps<"login.ftl">) => {
                     variant="body2"
                     component={Link}
                     href={url.loginResetCredentialsUrl}
-                    underline="hover"
+                    underline="none"
                   >
                     {msgStr("doForgotPassword")}
                   </Typography>
@@ -123,9 +136,9 @@ const Login = (props: PageProps<"login.ftl">) => {
                     variant="body2"
                     component={Link}
                     href={url.registrationUrl}
-                    underline="hover"
+                    underline="none"
                   >
-                    {msgStr("doRegister")}
+                    {"Login with SMS"}
                   </Typography>
                 )}
               </Box>
@@ -156,10 +169,12 @@ const Login = (props: PageProps<"login.ftl">) => {
                         fullWidth
                         size="large"
                         sx={{
+                          color: "black",
                           borderRadius: 1,
                           textTransform: "none",
                           justifyContent: "flex-start",
                           py: 1,
+                          borderColor: "divider",
                         }}
                       >
                         <Box
@@ -181,6 +196,30 @@ const Login = (props: PageProps<"login.ftl">) => {
                   ))}
                 </Grid>
               </>
+            )}
+
+            {/* Account links */}
+            {registrationAllowed && (
+              <Box
+                display="flex"
+                justifyContent="center"
+                alignItems="center"
+                gap={1}
+                mt={2}
+              >
+                <span className="text-gray-400">New Shoppe User?</span>
+
+                {registrationAllowed && (
+                  <Typography
+                    variant="body2"
+                    component={Link}
+                    href={url.registrationUrl}
+                    underline="hover"
+                  >
+                    {msgStr("doRegister")}
+                  </Typography>
+                )}
+              </Box>
             )}
           </form>
         </CardContent>

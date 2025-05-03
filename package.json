@@ -16,13 +16,13 @@
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
     "@fontsource/roboto": "^5.1.1",
-    "@mui/icons-material": "^6.4.3",
+    "@keycloakify/email-native": "~260007.0.0",
+    "@mui/icons-material": "^7.0.2",
     "@mui/lab": "^6.0.0-beta.26",
     "@mui/material": "^6.4.3",
     "keycloakify": "^11.8.13",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0",
-    "@keycloakify/email-native": "~260007.0.0"
+    "react-dom": "^19.0.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.19.0",
