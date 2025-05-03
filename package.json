@@ -4,6 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
+    "postinstall": "keycloakify sync-extensions",
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
@@ -20,7 +21,8 @@
     "@mui/material": "^6.4.3",
     "keycloakify": "^11.8.13",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "@keycloakify/email-native": "~260007.0.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.19.0",
