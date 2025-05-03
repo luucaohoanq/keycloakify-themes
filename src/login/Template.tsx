@@ -18,9 +18,9 @@ const Template = (props: CustomTemplateProps<"login.ftl">) => {
       <Box maxWidth="400px" minWidth="400px">
         <Card>{children}</Card>
         <Box display="flex" alignItems="center" style={{ marginTop: "1%" }}>
-          {/* <Typography color="white" variant="caption">
+          <Typography color="white" variant="caption">
             {realm.displayName}
-          </Typography> */}
+          </Typography>
           {!!enabledLanguages?.length && internationalizationEnabled && (
             <LanguageSelect
               style={{ marginLeft: "auto", color: "white" }}
