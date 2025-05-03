@@ -3,13 +3,14 @@ import type { ClassKey } from "keycloakify/login";
 import type { KcContext } from "./KcContext";
 import { useI18n } from "./i18n";
 import DefaultPage from "keycloakify/login/DefaultPage";
-import { Login } from "./pages/login/Index";
 import { Template } from "./Template";
 import { createTheme, ThemeProvider } from "@mui/material";
 import "./styles/theme.scss";
 const UserProfileFormFields = lazy(
   () => import("keycloakify/login/UserProfileFormFields")
 );
+import "./main.css";
+const Login = lazy(() => import("./pages/login/Index"));
 
 const doMakeUserConfirmPassword = true;
 
@@ -23,14 +24,25 @@ export default function KcPage(props: { kcContext: KcContext }) {
       light: {
         palette: {
           background: {
-            default: "#f0f0f0",
+            default: "transparent",
           },
           primary: {
-            main: kcContext.properties.FDN_THEME_PRIMARY_COLOR
+            main: kcContext.properties.FDN_THEME_PRIMARY_COLOR,
           },
           secondary: {
-            main: kcContext.properties.FDN_THEME_SECONDARY_COLOR
-          }
+            main: kcContext.properties.FDN_THEME_SECONDARY_COLOR,
+          },
+        },
+      },
+    },
+    components: {
+      MuiPaper: {
+        styleOverrides: {
+          root: {
+            backgroundColor: "rgba(255, 255, 255, 0.95)", // Actually make it semi-transparent
+            backdropFilter: "blur(5px)", // Reduced blur for better appearance
+            boxShadow: "0 8px 32px rgba(0, 0, 0, 0.1)",
+          },
         },
       },
     },

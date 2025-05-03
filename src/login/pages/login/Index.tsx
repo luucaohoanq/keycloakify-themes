@@ -1,20 +1,45 @@
-import { PageProps } from "../../types";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
+import CloseIcon from "@mui/icons-material/Close";
+import QrCode2Icon from "@mui/icons-material/QrCode2";
+import { LoadingButton } from "@mui/lab";
 import {
   Box,
   Button,
   CardContent,
+  Dialog,
+  DialogContent,
+  DialogTitle,
   Divider,
   Grid2 as Grid,
+  IconButton,
+  InputAdornment,
   Link,
+  Paper,
+  Stack,
   TextField,
   Typography,
-  Stack,
   useTheme,
-  Paper,
 } from "@mui/material";
-import { HintBox } from "../../../components/HintBox";
+import { QRCodeCanvas } from "qrcode.react";
 import { useState } from "react";
-import { LoadingButton } from "@mui/lab";
+import { HintBox } from "../../../components/HintBox";
+import { PageProps } from "../../types";
+import GoogleIcon from "@mui/icons-material/Google";
+import FacebookIcon from "@mui/icons-material/Facebook";
+import WindowIcon from "@mui/icons-material/Window";
+
+const getProviderIcon = (alias: string) => {
+  switch (alias.toLowerCase()) {
+    case "google":
+      return <GoogleIcon fontSize="small" />;
+    case "facebook":
+      return <FacebookIcon fontSize="small" />;
+    case "microsoft":
+      return <WindowIcon fontSize="small" />;
+    default:
+      return null;
+  }
+};
 
 const Login = (props: PageProps<"login.ftl">) => {
   const [loading, setLoading] = useState(false);
@@ -25,19 +50,79 @@ const Login = (props: PageProps<"login.ftl">) => {
   const { msgStr } = i18n;
   const theme = useTheme();
 
+  const [open, setOpen] = useState(false);
+
+  const handleOpenQR = () => setOpen(true);
+  const handleCloseQR = () => setOpen(false);
+  const [showPassword, setShowPassword] = useState(false);
+
+  const togglePasswordVisibility = () => {
+    setShowPassword((prev) => !prev);
+  };
+
   return (
     <Template i18n={i18n} kcContext={kcContext}>
       <Paper elevation={4}>
         <CardContent sx={{ p: 4 }}>
-          <Box mb={3} textAlign="left">
-            <Typography variant="h5" fontWeight="medium" color="black">
-              {/* {msgStr("doLogIn")} */}
-              {"Sign in"}
+          <Box
+            mb={3}
+            textAlign="left"
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            <Typography variant="h6" fontWeight="medium" color="black">
+              {"Log In"}
             </Typography>
-            {/* <Typography variant="body2" color="text.secondary" mt={1}>
-              {msgStr("loginAccountTitle", "Sign in to your account")}
-            </Typography> */}
+
+            <Box
+              onClick={handleOpenQR}
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                px: 2,
+                py: 1,
+                backgroundColor: "#FFF9E6",
+                border: "2px solid #FFA500",
+                borderRadius: "8px",
+                cursor: "pointer",
+                transition: "all 0.2s ease-in-out",
+                "&:hover": {
+                  boxShadow: "0 0 0 2px #FFCF66",
+                },
+              }}
+            >
+              <Typography
+                variant="body2"
+                sx={{ color: "#FFA500", fontWeight: 500, mr: 1 }}
+              >
+                Log in with QR
+              </Typography>
+              <QrCode2Icon sx={{ color: "#FF5722" }} />
+            </Box>
           </Box>
+
+          <Dialog open={open} onClose={handleCloseQR}>
+            <DialogTitle>
+              Scan QR Code to Login
+              <IconButton
+                onClick={handleCloseQR}
+                sx={{ position: "absolute", right: 8, top: 8 }}
+              >
+                <CloseIcon />
+              </IconButton>
+            </DialogTitle>
+            <DialogContent
+              sx={{ display: "flex", justifyContent: "center", p: 4 }}
+            >
+              <QRCodeCanvas
+                value="https://your-login-link.com/qr-session"
+                size={200}
+              />
+            </DialogContent>
+          </Dialog>
 
           <form
             onSubmit={() => setLoading(true)}
@@ -45,10 +130,10 @@ const Login = (props: PageProps<"login.ftl">) => {
             action={url.loginAction}
             method="post"
           >
-            <Stack spacing={2.5} mb={3}>
+            <Stack spacing={4} mb={2}>
               <TextField
                 error={messagesPerField.existsError("username")}
-                helperText={messagesPerField.getFirstError("username")}
+                // helperText={messagesPerField.getFirstError("username")}
                 fullWidth
                 label={
                   loginWithEmailAllowed
@@ -61,19 +146,83 @@ const Login = (props: PageProps<"login.ftl">) => {
                 size="medium"
                 autoComplete="username"
                 autoFocus
+                sx={{
+                  "& .MuiOutlinedInput-root": {
+                    "& fieldset": {
+                      borderColor: messagesPerField.existsError("username")
+                        ? theme.palette.error.main
+                        : theme.palette.divider,
+                    },
+                    "&:hover fieldset": {
+                      borderColor: messagesPerField.existsError("username")
+                        ? theme.palette.error.main
+                        : theme.palette.divider,
+                    },
+                    "&.Mui-focused fieldset": {
+                      borderColor: messagesPerField.existsError("username")
+                        ? theme.palette.error.main
+                        : theme.palette.divider,
+                    },
+                  },
+                  "& .MuiInputLabel-root": {
+                    color: theme.palette.text.disabled, // always gray
+                  },
+                  "& .MuiInputLabel-root.Mui-focused": {
+                    color: theme.palette.text.disabled, // still gray on focus
+                  },
+                  "& .MuiInputLabel-root.Mui-error": {
+                    color: theme.palette.error.main, // red on error (optional)
+                  },
+                }}
               />
 
               <TextField
                 error={messagesPerField.existsError("password")}
-                helperText={messagesPerField.getFirstError("password")}
                 fullWidth
-                type="password"
+                type={showPassword ? "text" : "password"}
                 label={msgStr("password")}
                 name="password"
                 id="password"
                 variant="outlined"
                 size="medium"
                 autoComplete="current-password"
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton onClick={togglePasswordVisibility} edge="end">
+                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
+                sx={{
+                  "& .MuiOutlinedInput-root": {
+                    "& fieldset": {
+                      borderColor: messagesPerField.existsError("username")
+                        ? theme.palette.error.main
+                        : theme.palette.divider,
+                    },
+                    "&:hover fieldset": {
+                      borderColor: messagesPerField.existsError("username")
+                        ? theme.palette.error.main
+                        : theme.palette.divider,
+                    },
+                    "&.Mui-focused fieldset": {
+                      borderColor: messagesPerField.existsError("username")
+                        ? theme.palette.error.main
+                        : theme.palette.divider,
+                    },
+                  },
+                  "& .MuiInputLabel-root": {
+                    color: theme.palette.text.disabled,
+                  },
+                  "& .MuiInputLabel-root.Mui-focused": {
+                    color: theme.palette.text.disabled,
+                  },
+                  "& .MuiInputLabel-root.Mui-error": {
+                    color: theme.palette.error.main,
+                  },
+                }}
               />
 
               {/* if the validation still error then disable the button */}
@@ -138,7 +287,7 @@ const Login = (props: PageProps<"login.ftl">) => {
                     href={url.registrationUrl}
                     underline="none"
                   >
-                    {"Login with SMS"}
+                    {"Log In with Phone Number"}
                   </Typography>
                 )}
               </Box>
@@ -149,17 +298,14 @@ const Login = (props: PageProps<"login.ftl">) => {
               <>
                 <Divider sx={{ my: 3 }}>
                   <Typography variant="body2" color="text.secondary" px={1}>
-                    {msgStr(
-                      "identity-provider-login-label",
-                      "Or continue with"
-                    )}
+                    {msgStr("identity-provider-login-label", "OR")}
                   </Typography>
                 </Divider>
 
                 <Grid container spacing={2}>
                   {social.providers.map((provider, i) => (
                     <Grid
-                      size={(social.providers ?? []).length > 3 ? 6 : 12}
+                      size={(social.providers ?? []).length > 1 ? 6 : 12}
                       key={i}
                     >
                       <Button
@@ -172,8 +318,7 @@ const Login = (props: PageProps<"login.ftl">) => {
                           color: "black",
                           borderRadius: 1,
                           textTransform: "none",
-                          justifyContent: "flex-start",
-                          py: 1,
+                          justifyContent: "center",
                           borderColor: "divider",
                         }}
                       >
@@ -188,7 +333,8 @@ const Login = (props: PageProps<"login.ftl">) => {
                             mr: 1,
                           }}
                         >
-                          <i className={provider.iconClasses}></i>
+                          {/* <i className={provider.iconClasses}></i> */}
+                          {getProviderIcon(provider.alias)}
                         </Box>
                         {provider.displayName}
                       </Button>
@@ -204,10 +350,11 @@ const Login = (props: PageProps<"login.ftl">) => {
                 display="flex"
                 justifyContent="center"
                 alignItems="center"
-                gap={1}
-                mt={2}
+                mt={4}
               >
-                <span className="text-gray-400">New Shoppe User?</span>
+                <Typography variant="body2" color="text.secondary" px={1}>
+                  {"New to Shoppe?"}
+                </Typography>
 
                 {registrationAllowed && (
                   <Typography
@@ -215,6 +362,8 @@ const Login = (props: PageProps<"login.ftl">) => {
                     component={Link}
                     href={url.registrationUrl}
                     underline="hover"
+                    color="#EE4D2D"
+                    fontWeight={"bold"}
                   >
                     {msgStr("doRegister")}
                   </Typography>
@@ -228,4 +377,4 @@ const Login = (props: PageProps<"login.ftl">) => {
   );
 };
 
-export { Login };
+export default Login;
