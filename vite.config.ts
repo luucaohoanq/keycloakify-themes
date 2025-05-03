@@ -7,7 +7,7 @@ import { keycloakify } from 'keycloakify/vite-plugin';
 export default defineConfig({
   plugins: [react(),
     keycloakify({
-      accountThemeImplementation: "none",
+      accountThemeImplementation: "Multi-Page",
       themeName: "fdn-themes",
       environmentVariables: [
         { name: 'FDN_THEME_PRIMARY_COLOR', default: '#1976d2' },
