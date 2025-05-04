@@ -1,5 +1,5 @@
 import { Button, Menu, MenuItem } from "@mui/material";
-import { I18n } from "../../utils/i18n/i18n";
+import { I18n } from "../../i18n/config";
 import { Language as LanguageIcon } from "@mui/icons-material";
 import { CSSProperties, MouseEvent, useState } from "react";
 const LanguageSelect = ({

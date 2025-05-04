@@ -89,7 +89,6 @@ export const ThemeProvider = ({ children }: Props) => {
 
   // Update body class when theme changes
   useEffect(() => {
-    const root = document.documentElement;
     const body = document.body;
 
     // Remove previous theme classes

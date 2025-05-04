@@ -6,7 +6,7 @@ import type {
   KcContextExtension,
   KcContextExtensionPerPage,
 } from "./KcContext";
-import { themeNames, kcEnvDefaults } from "../../keycloak-theme/kc.gen";
+import { themeNames, kcEnvDefaults } from "../../kc.gen";
 
 const kcContextExtension: KcContextExtension = {
   themeName: themeNames[0],

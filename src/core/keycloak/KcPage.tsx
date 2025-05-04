@@ -9,8 +9,10 @@ const UserProfileFormFields = lazy(
   () => import("keycloakify/login/UserProfileFormFields")
 );
 import "../../styles/main.css";
+import LoginOtpPage from "../../keycloak-theme/login-otp/LoginOtpPage";
 const Login = lazy(() => import("../../keycloak-theme/login/LoginPage"));
 const Register = lazy(() => import("../../keycloak-theme/register/Index"));
+import { Template as LoginOtpTemplate } from "../../keycloak-theme/login-otp/Template";
 
 const doMakeUserConfirmPassword = true;
 
@@ -58,6 +60,14 @@ export default function KcPage(props: { kcContext: KcContext }) {
               );
             case "register.ftl":
               return <Register kcContext={kcContext} i18n={i18n} />;
+            case "login-otp.ftl":
+              return (
+                <LoginOtpPage
+                  Template={LoginOtpTemplate}
+                  kcContext={kcContext}
+                  i18n={i18n}
+                />
+              );
             default:
               return (
                 <DefaultPage

@@ -1,6 +1,3 @@
-import { Visibility, VisibilityOff } from "@mui/icons-material";
-import CloseIcon from "@mui/icons-material/Close";
-import QrCode2Icon from "@mui/icons-material/QrCode2";
 import { LoadingButton } from "@mui/lab";
 import {
   Box,
@@ -23,24 +20,15 @@ import {
 import { QRCodeCanvas } from "qrcode.react";
 import { useState } from "react";
 import { HintBox } from "../../components/common/HintBox";
-import { PageProps } from "../../types";
-import GoogleIcon from "@mui/icons-material/Google";
-import FacebookIcon from "@mui/icons-material/Facebook";
-import WindowIcon from "@mui/icons-material/Window";
+import {
+  VisibilityIcon,
+  VisibilityOffIcon,
+  CloseButtonIcon,
+  QrCodeIcon,
+  getProviderIcon,
+} from "../../components/common/Icons";
 import { useThemeContext } from "../../theme/ThemeProvider";
-
-const getProviderIcon = (alias: string) => {
-  switch (alias.toLowerCase()) {
-    case "google":
-      return <GoogleIcon fontSize="small" />;
-    case "facebook":
-      return <FacebookIcon fontSize="small" />;
-    case "microsoft":
-      return <WindowIcon fontSize="small" />;
-    default:
-      return null;
-  }
-};
+import { PageProps } from "../../types";
 
 const Login = (props: PageProps<"login.ftl">) => {
   const [loading, setLoading] = useState(false);
@@ -115,7 +103,7 @@ const Login = (props: PageProps<"login.ftl">) => {
               >
                 Log in with QR
               </Typography>
-              <QrCode2Icon sx={{ color: "#FF5722" }} />
+              <QrCodeIcon sx={{ color: "#FF5722" }} />
             </Box>
           </Box>
 
@@ -126,7 +114,7 @@ const Login = (props: PageProps<"login.ftl">) => {
                 onClick={handleCloseQR}
                 sx={{ position: "absolute", right: 8, top: 8 }}
               >
-                <CloseIcon />
+                <CloseButtonIcon />
               </IconButton>
             </DialogTitle>
             <DialogContent
@@ -205,7 +193,11 @@ const Login = (props: PageProps<"login.ftl">) => {
                   endAdornment: (
                     <InputAdornment position="end">
                       <IconButton onClick={togglePasswordVisibility} edge="end">
-                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                        {showPassword ? (
+                          <VisibilityOffIcon />
+                        ) : (
+                          <VisibilityIcon />
+                        )}
                       </IconButton>
                     </InputAdornment>
                   ),
@@ -348,7 +340,6 @@ const Login = (props: PageProps<"login.ftl">) => {
                             mr: 1,
                           }}
                         >
-                          {/* <i className={provider.iconClasses}></i> */}
                           {getProviderIcon(provider.alias)}
                         </Box>
                         {provider.displayName}
