@@ -1,6 +1,6 @@
 import { Box, Card, Typography } from "@mui/material";
-import { CustomTemplateProps } from "./types";
-import { LanguageSelect } from "../components/LanguageSelect";
+import { CustomTemplateProps } from "../../types";
+import { LanguageSelect } from "../../components/common/LanguageSelect";
 
 const Template = (props: CustomTemplateProps<"login.ftl">) => {
   const { children, kcContext, i18n } = props;

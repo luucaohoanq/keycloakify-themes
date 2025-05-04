@@ -22,11 +22,12 @@ import {
 } from "@mui/material";
 import { QRCodeCanvas } from "qrcode.react";
 import { useState } from "react";
-import { HintBox } from "../../../components/HintBox";
+import { HintBox } from "../../components/common/HintBox";
 import { PageProps } from "../../types";
 import GoogleIcon from "@mui/icons-material/Google";
 import FacebookIcon from "@mui/icons-material/Facebook";
 import WindowIcon from "@mui/icons-material/Window";
+import { useThemeContext } from "../../theme/ThemeProvider";
 
 const getProviderIcon = (alias: string) => {
   switch (alias.toLowerCase()) {
@@ -49,6 +50,7 @@ const Login = (props: PageProps<"login.ftl">) => {
     realm;
   const { msgStr } = i18n;
   const theme = useTheme();
+  const { mode } = useThemeContext();
 
   const [open, setOpen] = useState(false);
 
@@ -62,7 +64,16 @@ const Login = (props: PageProps<"login.ftl">) => {
 
   return (
     <Template i18n={i18n} kcContext={kcContext}>
-      <Paper elevation={4}>
+      <Paper
+        elevation={4}
+        sx={{
+          bgcolor: "background.paper",
+          boxShadow:
+            mode === "dark"
+              ? "0 8px 32px rgba(0, 0, 0, 0.5)"
+              : "0 8px 32px rgba(0, 0, 0, 0.1)",
+        }}
+      >
         <CardContent sx={{ p: 4 }}>
           <Box
             mb={3}
@@ -73,7 +84,11 @@ const Login = (props: PageProps<"login.ftl">) => {
               alignItems: "center",
             }}
           >
-            <Typography variant="h6" fontWeight="medium" color="black">
+            <Typography
+              variant="h6"
+              fontWeight="medium"
+              color={mode === "dark" ? "white" : "black"}
+            >
               {"Log In"}
             </Typography>
 
@@ -84,7 +99,7 @@ const Login = (props: PageProps<"login.ftl">) => {
                 alignItems: "center",
                 px: 2,
                 py: 1,
-                backgroundColor: "#FFF9E6",
+                backgroundColor: mode === "dark" ? "#423500" : "#FFF9E6",
                 border: "2px solid #FFA500",
                 borderRadius: "8px",
                 cursor: "pointer",

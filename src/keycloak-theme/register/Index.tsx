@@ -15,25 +15,24 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { JSX, useState } from "react";
-import { HintBox } from "../components/HintBox";
-import { KcContext } from "../login/KcContext";
-import { I18n } from "../login/i18n";
-import type { CustomTemplateProps } from "../login/types";
+import { useState } from "react";
+import { HintBox } from "../../components/common/HintBox";
+import { KcContext } from "../../core/keycloak/KcContext";
+import { I18n } from "../../i18n/config";
+import { AuthTemplate } from "../templates/AuthTemplate";
 
-// Define the props type inline if importing doesn't work
-export type RegisterPageProps = {
-  Template: (props: CustomTemplateProps<"register.ftl">) => JSX.Element;
+// Use this simplified props type
+type RegisterProps = {
   kcContext: Extract<KcContext, { pageId: "register.ftl" }>;
   i18n: I18n;
 };
 
-const Register = (props: RegisterPageProps) => {
+const Register = (props: RegisterProps) => {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  const { i18n, Template, kcContext } = props;
+  const { i18n, kcContext } = props;
   const {
     url,
     message,
@@ -49,10 +48,9 @@ const Register = (props: RegisterPageProps) => {
 
   // Parse profile attributes
   const { attributesByName = {} } = profile || {};
-  // const attributes = Object.entries(attributesByName || {});
 
   return (
-    <Template i18n={i18n} kcContext={kcContext}>
+    <AuthTemplate i18n={i18n} kcContext={kcContext}>
       <Paper
         elevation={4}
         sx={{
@@ -222,121 +220,6 @@ const Register = (props: RegisterPageProps) => {
                 }}
               />
 
-              {/* Custom attributes rendering */}
-              {/* {attributes
-                .filter(
-                  ([name]) =>
-                    !["username", "email", "firstName", "lastName"].includes(
-                      name
-                    )
-                )
-                .map(([name, attribute]) => {
-                  if (!attribute) return null;
-
-                  const {
-                    displayName,
-                    required = true,
-                    readOnly = false,
-                    annotations = {},
-                    validators = {},
-                    value = "",
-                  } = attribute;
-
-                  // Select dropdown
-                  if (validators.options?.options) {
-                    return (
-                      <FormControl
-                        key={name}
-                        fullWidth
-                        error={messagesPerField.existsError(name)}
-                        disabled={readOnly}
-                        size="medium"
-                      >
-                        <InputLabel id={`${name}-label`}>
-                          {displayName}
-                        </InputLabel>
-                        <Select
-                          labelId={`${name}-label`}
-                          id={name}
-                          name={name}
-                          defaultValue={value || ""}
-                          label={displayName}
-                          required={required}
-                        >
-                          {validators.options.options.map((option) => (
-                            <MenuItem key={option} value={option}>
-                              {annotations.inputOptionLabelsI18nPrefix
-                                ? msgStr(
-                                    `${annotations.inputOptionLabelsI18nPrefix}.${option}`,
-                                    option
-                                  )
-                                : option}
-                            </MenuItem>
-                          ))}
-                        </Select>
-                        {messagesPerField.existsError(name) && (
-                          <FormHelperText>
-                            {messagesPerField.get(name)}
-                          </FormHelperText>
-                        )}
-                      </FormControl>
-                    );
-                  }
-
-                  // Checkbox options
-                  if (annotations.inputType === "multiselect-checkboxes") {
-                    const options = validators.options?.options || [];
-                    const optionLabels = annotations.inputOptionLabels || {};
-
-                    return (
-                      <Box key={name}>
-                        <Typography variant="subtitle2" mb={1}>
-                          {displayName}
-                        </Typography>
-                        {options.map((option) => (
-                          <FormControlLabel
-                            key={option}
-                            control={
-                              <Checkbox
-                                name={`${name}[${option}]`}
-                                value={option}
-                                disabled={readOnly}
-                                defaultChecked={value === option}
-                              />
-                            }
-                            label={optionLabels[option] || option}
-                          />
-                        ))}
-                        {messagesPerField.existsError(name) && (
-                          <FormHelperText error>
-                            {messagesPerField.get(name)}
-                          </FormHelperText>
-                        )}
-                      </Box>
-                    );
-                  }
-
-                  // Default text input
-                  return (
-                    <TextField
-                      key={name}
-                      id={name}
-                      name={name}
-                      label={displayName}
-                      defaultValue={value || ""}
-                      error={messagesPerField.existsError(name)}
-                      helperText={
-                        messagesPerField.get(name) ||
-                        annotations.inputHelperTextBefore
-                      }
-                      fullWidth
-                      disabled={readOnly}
-                      required={required}
-                      size="medium"
-                    />
-                  );
-                })} */}
-
               {/* Terms acceptance */}
               {termsAcceptanceRequired && (
                 <Box>
@@ -417,7 +300,7 @@ const Register = (props: RegisterPageProps) => {
           </form>
         </CardContent>
       </Paper>
-    </Template>
+    </AuthTemplate>
   );
 };
 
