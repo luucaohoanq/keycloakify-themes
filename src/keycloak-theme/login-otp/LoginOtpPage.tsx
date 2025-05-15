@@ -1,134 +1,114 @@
-import { useState } from "react";
+import { LoadingButton } from "@mui/lab";
 import {
   Box,
-  TextField,
-  CardContent,
-  Typography,
+  FormControl,
+  FormControlLabel,
+  Paper,
   Radio,
   RadioGroup,
-  FormControlLabel,
-  FormControl,
-  FormHelperText,
-  Paper,
   Stack,
+  TextField,
+  Typography,
 } from "@mui/material";
-import { LoadingButton } from "@mui/lab";
+import { useState } from "react";
 import { HintBox } from "../../components/common/HintBox";
+import { FingerPrintIcon, KeyIcon } from "../../components/common/Icons";
 import { useThemeContext } from "../../theme/ThemeProvider";
-import { KeyIcon, FingerPrintIcon } from "../../components/common/Icons";
 import { PageProps } from "../../types";
 import { Template } from "./Template";
+import {
+  credentialTitleStyle,
+  loginButtonStyle,
+  paperStyle,
+  subtitleTextStyle,
+  titleTextStyle,
+} from "./style";
 
 const LoginOtpPage = (props: PageProps<"login-otp.ftl">) => {
   const [loading, setLoading] = useState(false);
   const { i18n, kcContext } = props;
-  const { messagesPerField, otpLogin, url } = kcContext;
+  const { messagesPerField, otpLogin, url, message } = kcContext;
   const { msgStr } = i18n;
   const { mode } = useThemeContext();
 
-  // Handle form submission
   const handleSubmit = () => {
     setLoading(true);
-    // The form will naturally submit to the Keycloak backend
   };
 
-  // Get icon based on credential type (could be expanded)
-  const getCredentialIcon = (type: string) => {
-    if (type.toLowerCase().includes("totp")) {
-      return <KeyIcon fontSize="small" />;
-    }
-    return <FingerPrintIcon fontSize="small" />;
-  };
+  const getCredentialIcon = (type: string) =>
+    type.toLowerCase().includes("totp") ? (
+      <KeyIcon fontSize="small" />
+    ) : (
+      <FingerPrintIcon fontSize="small" />
+    );
 
   return (
     <Template i18n={i18n} kcContext={kcContext}>
-      <Paper
-        elevation={4}
-        sx={{
-          bgcolor: "background.paper",
-          boxShadow:
-            mode === "dark"
-              ? "0 8px 32px rgba(0, 0, 0, 0.5)"
-              : "0 8px 32px rgba(0, 0, 0, 0.1)",
-        }}
-      >
-        <CardContent sx={{ p: 4 }}>
-          <Box mb={3} textAlign="center">
-            <Typography
-              variant="h5"
-              fontWeight="medium"
-              color="primary"
-              gutterBottom
-            >
-              {msgStr("doLogIn", "Log In")}
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              {msgStr("loginTotpIntro", "Please enter your one-time code")}
-            </Typography>
-          </Box>
+      <Paper elevation={3} sx={paperStyle}>
+        <form
+          id="kc-otp-login-form"
+          action={url.loginAction}
+          method="post"
+          onSubmit={handleSubmit}
+        >
+          <Stack spacing={4}>
+            <Box sx={titleTextStyle}>
+              <Typography variant="h5" fontWeight={600} color="primary">
+                {msgStr("doLogIn", "Log In")}
+              </Typography>
+              <Typography
+                variant="body2"
+                color="text.secondary"
+                sx={subtitleTextStyle}
+              >
+                {msgStr("loginTotpIntro", "Enter your one-time passcode")}
+              </Typography>
+            </Box>
 
-          <form
-            id="kc-otp-login-form"
-            action={url.loginAction}
-            method="post"
-            onSubmit={handleSubmit}
-          >
-            <Stack spacing={3}>
-              {/* Multiple OTP credentials selection if available */}
-              {otpLogin.userOtpCredentials &&
-                otpLogin.userOtpCredentials.length > 1 && (
-                  <FormControl component="fieldset">
-                    <Typography
-                      variant="subtitle2"
-                      mb={1}
-                      color="text.secondary"
-                    >
-                      {msgStr("loginTotpAlgorithm", "Authentication method")}
-                    </Typography>
-                    <RadioGroup
-                      defaultValue={
-                        otpLogin.selectedCredentialId ||
-                        otpLogin.userOtpCredentials[0].id
+            {otpLogin.userOtpCredentials?.length > 1 && (
+              <FormControl>
+                <Typography variant="subtitle2" sx={credentialTitleStyle}>
+                  {msgStr("loginTotpAlgorithm", "Choose authentication method")}
+                </Typography>
+                <RadioGroup
+                  defaultValue={
+                    otpLogin.selectedCredentialId ||
+                    otpLogin.userOtpCredentials[0].id
+                  }
+                  name="selectedCredentialId"
+                >
+                  {otpLogin.userOtpCredentials.map((credential) => (
+                    <FormControlLabel
+                      key={credential.id}
+                      value={credential.id}
+                      control={<Radio size="small" />}
+                      label={
+                        <Stack direction="row" alignItems="center" spacing={1}>
+                          {getCredentialIcon(credential.id || "")}
+                          <Typography variant="body2">
+                            {credential.userLabel}
+                          </Typography>
+                        </Stack>
                       }
-                      name="selectedCredentialId"
-                    >
-                      {otpLogin.userOtpCredentials.map((credential) => (
-                        <FormControlLabel
-                          key={credential.id}
-                          value={credential.id}
-                          control={<Radio />}
-                          label={
-                            <Box
-                              sx={{
-                                display: "flex",
-                                alignItems: "center",
-                                gap: 1,
-                              }}
-                            >
-                              {getCredentialIcon(credential.id || "")}
-                              <Typography>{credential.userLabel}</Typography>
-                            </Box>
-                          }
-                        />
-                      ))}
-                    </RadioGroup>
-                  </FormControl>
-                )}
+                    />
+                  ))}
+                </RadioGroup>
+              </FormControl>
+            )}
 
-              {/* OTP Input Field */}
+            <Box>
               <TextField
                 id="otp"
                 name="otp"
                 label={msgStr("loginOtpOneTime", "One-time code")}
                 variant="outlined"
                 fullWidth
-                autoComplete="one-time-code"
                 autoFocus
                 inputProps={{
                   maxLength: 6,
-                  dir: "ltr",
-                  pattern: "[0-9]*",
                   inputMode: "numeric",
+                  pattern: "[0-9]*",
+                  dir: "ltr",
                 }}
                 error={messagesPerField.existsError("totp")}
                 helperText={
@@ -138,38 +118,24 @@ const LoginOtpPage = (props: PageProps<"login-otp.ftl">) => {
                 }
                 required
               />
+            </Box>
 
-              {/* Error message display */}
-              {messagesPerField.existsError("totp") && (
-                <FormHelperText error>
-                  {messagesPerField.get("totp")}
-                </FormHelperText>
-              )}
+            {message && message.type !== "success" && (
+              <HintBox type={message.type} message={message.summary} />
+            )}
 
-              {/* Submit Button */}
-              <LoadingButton
-                type="submit"
-                fullWidth
-                variant="contained"
-                size="large"
-                loading={loading}
-                sx={{ mt: 2, py: 1.5 }}
-              >
-                {msgStr("doLogIn", "Log In")}
-              </LoadingButton>
-
-              {/* Display error messages */}
-              {kcContext.message && kcContext.message.type !== "success" && (
-                <Box mt={2}>
-                  <HintBox
-                    type={kcContext.message.type}
-                    message={kcContext.message.summary}
-                  />
-                </Box>
-              )}
-            </Stack>
-          </form>
-        </CardContent>
+            <LoadingButton
+              type="submit"
+              variant="contained"
+              fullWidth
+              size="large"
+              loading={loading}
+              sx={loginButtonStyle}
+            >
+              {msgStr("doLogIn", "Log In")}
+            </LoadingButton>
+          </Stack>
+        </form>
       </Paper>
     </Template>
   );

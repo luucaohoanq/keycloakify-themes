@@ -29,6 +29,25 @@ import {
 } from "../../components/common/Icons";
 import { useThemeContext } from "../../theme/ThemeProvider";
 import { PageProps } from "../../types";
+import {
+  paperStyles,
+  cardContentStyles,
+  titleContainerStyles,
+  titleTextStyles,
+  qrButtonStyles,
+  qrTextStyles,
+  dialogCloseButtonStyles,
+  dialogContentStyles,
+  getTextFieldStyles,
+  loginButtonStyles,
+  accountLinksContainerStyles,
+  dividerTextStyles,
+  socialButtonStyles,
+  socialIconContainerStyles,
+  registrationPromptContainerStyles,
+  registrationTextStyles,
+  registrationLinkStyles,
+} from "./style";
 
 const Login = (props: PageProps<"login.ftl">) => {
   const [loading, setLoading] = useState(false);
@@ -52,55 +71,15 @@ const Login = (props: PageProps<"login.ftl">) => {
 
   return (
     <Template i18n={i18n} kcContext={kcContext}>
-      <Paper
-        elevation={4}
-        sx={{
-          bgcolor: "background.paper",
-          boxShadow:
-            mode === "dark"
-              ? "0 8px 32px rgba(0, 0, 0, 0.5)"
-              : "0 8px 32px rgba(0, 0, 0, 0.1)",
-        }}
-      >
-        <CardContent sx={{ p: 4 }}>
-          <Box
-            mb={3}
-            textAlign="left"
-            sx={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-            }}
-          >
-            <Typography
-              variant="h6"
-              fontWeight="medium"
-              color={mode === "dark" ? "white" : "black"}
-            >
+      <Paper elevation={4} sx={paperStyles(mode)}>
+        <CardContent sx={cardContentStyles}>
+          <Box mb={3} textAlign="left" sx={titleContainerStyles}>
+            <Typography variant="h6" sx={titleTextStyles(mode)}>
               {"Log In"}
             </Typography>
 
-            <Box
-              onClick={handleOpenQR}
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                px: 2,
-                py: 1,
-                backgroundColor: mode === "dark" ? "#423500" : "#FFF9E6",
-                border: "2px solid #FFA500",
-                borderRadius: "8px",
-                cursor: "pointer",
-                transition: "all 0.2s ease-in-out",
-                "&:hover": {
-                  boxShadow: "0 0 0 2px #FFCF66",
-                },
-              }}
-            >
-              <Typography
-                variant="body2"
-                sx={{ color: "#FFA500", fontWeight: 500, mr: 1 }}
-              >
+            <Box onClick={handleOpenQR} sx={qrButtonStyles(mode)}>
+              <Typography variant="body2" sx={qrTextStyles}>
                 Log in with QR
               </Typography>
               <QrCodeIcon sx={{ color: "#FF5722" }} />
@@ -110,16 +89,11 @@ const Login = (props: PageProps<"login.ftl">) => {
           <Dialog open={open} onClose={handleCloseQR}>
             <DialogTitle>
               Scan QR Code to Login
-              <IconButton
-                onClick={handleCloseQR}
-                sx={{ position: "absolute", right: 8, top: 8 }}
-              >
+              <IconButton onClick={handleCloseQR} sx={dialogCloseButtonStyles}>
                 <CloseButtonIcon />
               </IconButton>
             </DialogTitle>
-            <DialogContent
-              sx={{ display: "flex", justifyContent: "center", p: 4 }}
-            >
+            <DialogContent sx={dialogContentStyles}>
               <QRCodeCanvas
                 value="https://your-login-link.com/qr-session"
                 size={200}
@@ -136,7 +110,6 @@ const Login = (props: PageProps<"login.ftl">) => {
             <Stack spacing={4} mb={2}>
               <TextField
                 error={messagesPerField.existsError("username")}
-                // helperText={messagesPerField.getFirstError("username")}
                 fullWidth
                 label={
                   loginWithEmailAllowed
@@ -149,34 +122,10 @@ const Login = (props: PageProps<"login.ftl">) => {
                 size="medium"
                 autoComplete="username"
                 autoFocus
-                sx={{
-                  "& .MuiOutlinedInput-root": {
-                    "& fieldset": {
-                      borderColor: messagesPerField.existsError("username")
-                        ? theme.palette.error.main
-                        : theme.palette.divider,
-                    },
-                    "&:hover fieldset": {
-                      borderColor: messagesPerField.existsError("username")
-                        ? theme.palette.error.main
-                        : theme.palette.divider,
-                    },
-                    "&.Mui-focused fieldset": {
-                      borderColor: messagesPerField.existsError("username")
-                        ? theme.palette.error.main
-                        : theme.palette.divider,
-                    },
-                  },
-                  "& .MuiInputLabel-root": {
-                    color: theme.palette.text.disabled, // always gray
-                  },
-                  "& .MuiInputLabel-root.Mui-focused": {
-                    color: theme.palette.text.disabled, // still gray on focus
-                  },
-                  "& .MuiInputLabel-root.Mui-error": {
-                    color: theme.palette.error.main, // red on error (optional)
-                  },
-                }}
+                sx={getTextFieldStyles(
+                  theme,
+                  messagesPerField.existsError("username")
+                )}
               />
 
               <TextField
@@ -202,37 +151,11 @@ const Login = (props: PageProps<"login.ftl">) => {
                     </InputAdornment>
                   ),
                 }}
-                sx={{
-                  "& .MuiOutlinedInput-root": {
-                    "& fieldset": {
-                      borderColor: messagesPerField.existsError("username")
-                        ? theme.palette.error.main
-                        : theme.palette.divider,
-                    },
-                    "&:hover fieldset": {
-                      borderColor: messagesPerField.existsError("username")
-                        ? theme.palette.error.main
-                        : theme.palette.divider,
-                    },
-                    "&.Mui-focused fieldset": {
-                      borderColor: messagesPerField.existsError("username")
-                        ? theme.palette.error.main
-                        : theme.palette.divider,
-                    },
-                  },
-                  "& .MuiInputLabel-root": {
-                    color: theme.palette.text.disabled,
-                  },
-                  "& .MuiInputLabel-root.Mui-focused": {
-                    color: theme.palette.text.disabled,
-                  },
-                  "& .MuiInputLabel-root.Mui-error": {
-                    color: theme.palette.error.main,
-                  },
-                }}
+                sx={getTextFieldStyles(
+                  theme,
+                  messagesPerField.existsError("password")
+                )}
               />
-
-              {/* if the validation still error then disable the button */}
 
               <LoadingButton
                 fullWidth
@@ -245,17 +168,7 @@ const Login = (props: PageProps<"login.ftl">) => {
                 }
                 type="submit"
                 size="large"
-                sx={{
-                  mt: 1,
-                  py: 1.2,
-                  backgroundColor: "#EE4D2D",
-                  fontWeight: "medium",
-                  //change color button background on disable
-                  "&:disabled": {
-                    backgroundColor: "#f4826c",
-                    color: theme.palette.common.white,
-                  },
-                }}
+                sx={loginButtonStyles}
               >
                 {msgStr("doLogIn")}
               </LoadingButton>
@@ -271,12 +184,7 @@ const Login = (props: PageProps<"login.ftl">) => {
 
             {/* Account links */}
             {(resetPasswordAllowed || registrationAllowed) && (
-              <Box
-                display="flex"
-                justifyContent="space-between"
-                alignItems="center"
-                mb={2}
-              >
+              <Box sx={accountLinksContainerStyles}>
                 {resetPasswordAllowed && (
                   <Typography
                     variant="body2"
@@ -304,7 +212,11 @@ const Login = (props: PageProps<"login.ftl">) => {
             {!!social?.providers?.length && (
               <>
                 <Divider sx={{ my: 3 }}>
-                  <Typography variant="body2" color="text.secondary" px={1}>
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    sx={dividerTextStyles}
+                  >
                     {msgStr("identity-provider-login-label", "OR")}
                   </Typography>
                 </Divider>
@@ -321,25 +233,9 @@ const Login = (props: PageProps<"login.ftl">) => {
                         variant="outlined"
                         fullWidth
                         size="large"
-                        sx={{
-                          color: "black",
-                          borderRadius: 1,
-                          textTransform: "none",
-                          justifyContent: "center",
-                          borderColor: "divider",
-                        }}
+                        sx={socialButtonStyles}
                       >
-                        <Box
-                          component="span"
-                          sx={{
-                            width: 24,
-                            height: 24,
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            mr: 1,
-                          }}
-                        >
+                        <Box component="span" sx={socialIconContainerStyles}>
                           {getProviderIcon(provider.alias)}
                         </Box>
                         {provider.displayName}
@@ -352,13 +248,12 @@ const Login = (props: PageProps<"login.ftl">) => {
 
             {/* Account links */}
             {registrationAllowed && (
-              <Box
-                display="flex"
-                justifyContent="center"
-                alignItems="center"
-                mt={4}
-              >
-                <Typography variant="body2" color="text.secondary" px={1}>
+              <Box sx={registrationPromptContainerStyles}>
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  sx={registrationTextStyles}
+                >
                   {"New to Shoppe?"}
                 </Typography>
 
@@ -367,9 +262,7 @@ const Login = (props: PageProps<"login.ftl">) => {
                     variant="body2"
                     component={Link}
                     href={url.registrationUrl}
-                    underline="hover"
-                    color="#EE4D2D"
-                    fontWeight={"bold"}
+                    sx={registrationLinkStyles}
                   >
                     {msgStr("doRegister")}
                   </Typography>
