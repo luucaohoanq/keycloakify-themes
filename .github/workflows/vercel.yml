@@ -1,53 +1,63 @@
 name: Vercel Deploy
-
 on:
   push:
     branches: ["main"]
+    paths-ignore:
+      - '**.md'
+      - '.github/ISSUE_TEMPLATE/**'
+      - '.vscode/**'
     
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
       
-      - name: Set up Node.js 18.x
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 18.x
           cache: "yarn"
-          cache-dependency-path: yarn.lock
       
       - name: Install dependencies
-        run: yarn install
+        run: yarn install --frozen-lockfile --prefer-offline
       
-      - name: Build the project
+      - name: Build storybook
         run: yarn build-storybook
       
-      - name: Deploy to Production Repo
+      - name: Configure SSH
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
         run: |
-          git config --global user.name "lcaohoanq"
-          git config --global user.email "hoangclw@gmail.com"
-          
           mkdir -p ~/.ssh
           echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_ed25519
           chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan github.com >> ~/.ssh/known_hosts
           eval "$(ssh-agent -s)"
           ssh-add ~/.ssh/id_ed25519
+      
+      - name: Configure Git
+        run: |
+          git config --global user.name "lcaohoanq"
+          git config --global user.email "hoangclw@gmail.com"
+      
+      - name: Deploy to Production
+        run: |
+          git clone --depth=1 git@github.com:hoangclw/spkcstb.git production-repo
           
-          ssh-keyscan github.com >> ~/.ssh/known_hosts
-          
-          git clone git@github.com:hoangclw/spkcstb.git production-repo
+          # Remove and copy directories in one step each
           rm -rf production-repo/storybook-static
-          cp -r storybook-static production-repo/  
+          cp -r storybook-static production-repo/
+          
+          rm -rf production-repo/dist_keycloak
+          cp -r dist_keycloak production-repo/
           
           cd production-repo
-          git pull
           git add .
-          if git diff --staged --quiet; then
-            git commit --allow-empty -m "Trigger CD"
-          else
-            git commit -m "Deploy new build from ${{ github.ref_name }} branch"
-          fi
+          
+          # More efficient commit logic
+          git diff --staged --quiet || git commit -m "Deploy from ${{ github.ref_name }} - ${{ github.sha }}"
           git push origin main
