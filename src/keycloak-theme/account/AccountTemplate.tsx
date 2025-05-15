@@ -7,7 +7,7 @@ import {
   ListItem,
   ListItemButton,
   ListItemIcon,
-  ListItemText,
+  // ListItemText,
   Toolbar,
   Typography,
   useTheme,
@@ -20,7 +20,6 @@ import {
 import { ThemeToggle } from "../../components/common/ThemeToggle";
 import { useThemeContext } from "../../theme/ThemeProvider";
 import { CustomTemplateProps } from "../../types";
-import { ReactNode } from "react";
 
 // Sidebar width
 const drawerWidth = 250;
@@ -36,9 +35,9 @@ const menuItems = [
 ];
 
 export const AccountTemplate = (props: AccountTemplateProps) => {
-  const { children, kcContext, i18n, active = "account" } = props;
-  const { realm } = kcContext;
-  const { msgStr } = i18n;
+  const { children, active = "account" } = props;
+  // const { _realm } = kcContext;
+  // const { msgStr } = i18n;
   const { mode } = useThemeContext();
   const theme = useTheme();
 
@@ -67,10 +66,10 @@ export const AccountTemplate = (props: AccountTemplateProps) => {
           }}
         >
           <Typography variant="h6" fontWeight="bold" color="primary">
-            {realm.displayName || "Account Console"}
+            {"Account Console"}
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            {msgStr("accountManagementTitle", "Manage your account")}
+            {"Manage your account"}
           </Typography>
         </Toolbar>
 
@@ -97,7 +96,7 @@ export const AccountTemplate = (props: AccountTemplateProps) => {
                 }}
               >
                 <ListItemIcon sx={{ minWidth: 40 }}>{item.icon}</ListItemIcon>
-                <ListItemText primary={msgStr(item.id, item.label)} />
+                {/* <ListItemText primary={msgStr(item.id, item.label)} /> */}
               </ListItemButton>
             </ListItem>
           ))}

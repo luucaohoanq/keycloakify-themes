@@ -1,5 +1,5 @@
-import React, { ReactElement } from "react";
 import { JSX } from "@emotion/react/jsx-runtime";
+import React from "react";
 import type { I18n } from "../../i18n/config";
 
 // Base mock context for Keycloak themes
@@ -31,8 +31,8 @@ export const mockKcContext = {
   },
   message: null,
   messagesPerField: {
-    existsError: (field: string) => false,
-    get: (field: string) => "",
+    existsError: (_field: string) => false,
+    get: (_field: string) => "",
     getFirstError: () => "",
   },
   properties: {

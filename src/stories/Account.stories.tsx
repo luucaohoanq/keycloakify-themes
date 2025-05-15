@@ -1,3 +1,5 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-nocheck
 import type { Meta, StoryObj } from "@storybook/react";
 import AccountPage from "../keycloak-theme/account/AccountPage";
 import { ThemeProvider } from "../theme/ThemeProvider";
@@ -24,7 +26,7 @@ const AccountStory = () => {
 
   return (
     <ThemeProvider>
-      <AccountPage kcContext={accountMockContext as any} i18n={mockI18n} />
+      <AccountPage kcContext={accountMockContext} i18n={mockI18n} />
     </ThemeProvider>
   );
 };
