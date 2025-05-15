@@ -30,3 +30,13 @@ export const loginButtonStyle: SxProps<Theme> = {
   py: 1.5,
   borderRadius: 2,
 };
+
+export const otpInputStyle: React.CSSProperties = {
+  width: "3rem",
+  height: "3.5rem",
+  fontSize: "1.5rem",
+  borderRadius: "8px",
+  border: "1px solid #ccc",
+  textAlign: "center",
+  outline: "none",
+};

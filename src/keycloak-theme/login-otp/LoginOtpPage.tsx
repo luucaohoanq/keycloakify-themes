@@ -7,10 +7,10 @@ import {
   Radio,
   RadioGroup,
   Stack,
-  TextField,
   Typography,
 } from "@mui/material";
 import { useState } from "react";
+import OtpInput from "react-otp-input";
 import { HintBox } from "../../components/common/HintBox";
 import { FingerPrintIcon, KeyIcon } from "../../components/common/Icons";
 import { useThemeContext } from "../../theme/ThemeProvider";
@@ -19,20 +19,28 @@ import { Template } from "./Template";
 import {
   credentialTitleStyle,
   loginButtonStyle,
+  otpInputStyle,
   paperStyle,
   subtitleTextStyle,
   titleTextStyle,
 } from "./style";
 
+const numberOfDigits = 6;
+
 const LoginOtpPage = (props: PageProps<"login-otp.ftl">) => {
   const [loading, setLoading] = useState(false);
+  const [otp, setOtp] = useState("");
   const { i18n, kcContext } = props;
   const { messagesPerField, otpLogin, url, message } = kcContext;
   const { msgStr } = i18n;
   const { mode } = useThemeContext();
 
+  const isOtpValid = otp.length === numberOfDigits;
+
   const handleSubmit = () => {
-    setLoading(true);
+    if (isOtpValid) {
+      setLoading(true);
+    }
   };
 
   const getCredentialIcon = (type: string) =>
@@ -96,33 +104,63 @@ const LoginOtpPage = (props: PageProps<"login-otp.ftl">) => {
               </FormControl>
             )}
 
-            <Box>
-              <TextField
-                id="otp"
-                name="otp"
-                label={msgStr("loginOtpOneTime", "One-time code")}
-                variant="outlined"
-                fullWidth
-                autoFocus
-                inputProps={{
-                  maxLength: 6,
-                  inputMode: "numeric",
-                  pattern: "[0-9]*",
-                  dir: "ltr",
+            <Box display="flex" justifyContent="center">
+              <OtpInput
+                value={otp}
+                onChange={(value) => {
+                  // Only allow numeric input
+                  const numericValue = value.replace(/[^0-9]/g, "");
+                  setOtp(numericValue);
                 }}
-                error={messagesPerField.existsError("totp")}
-                helperText={
-                  messagesPerField.existsError("totp")
-                    ? messagesPerField.get("totp")
-                    : ""
-                }
-                required
+                numInputs={numberOfDigits}
+                inputType="text"
+                shouldAutoFocus
+                inputStyle={otpInputStyle}
+                containerStyle={{ gap: "8px" }}
+                renderInput={(props) => (
+                  <input
+                    {...props}
+                    name="otp"
+                    pattern="[0-9]*"
+                    inputMode="numeric"
+                    onKeyPress={(e) => {
+                      // Prevent non-numeric keystrokes
+                      if (!/[0-9]/.test(e.key)) {
+                        e.preventDefault();
+                      }
+                    }}
+                  />
+                )}
               />
             </Box>
+
+            {messagesPerField.existsError("totp") && (
+              <Typography color="error" fontSize="0.8rem" textAlign="center">
+                {messagesPerField.get("totp")}
+              </Typography>
+            )}
 
             {message && message.type !== "success" && (
               <HintBox type={message.type} message={message.summary} />
             )}
+
+            {/* <Typography
+              variant="caption"
+              textAlign="center"
+              color={
+                isOtpValid
+                  ? "success.main"
+                  : otp.length > 0
+                  ? "text.secondary"
+                  : "transparent"
+              }
+            >
+              {isOtpValid
+                ? "OTP is complete"
+                : otp.length > 0
+                ? `Please enter all ${6 - otp.length} remaining digits`
+                : "Enter 6-digit code"}
+            </Typography> */}
 
             <LoadingButton
               type="submit"
@@ -130,6 +168,7 @@ const LoginOtpPage = (props: PageProps<"login-otp.ftl">) => {
               fullWidth
               size="large"
               loading={loading}
+              disabled={!isOtpValid || loading}
               sx={loginButtonStyle}
             >
               {msgStr("doLogIn", "Log In")}
