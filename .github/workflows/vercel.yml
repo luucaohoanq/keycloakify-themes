@@ -27,6 +27,10 @@ jobs:
       
       - name: Build storybook
         run: yarn build-storybook
+        
+      - name: Build Keycloak theme (continue on error)
+        run: yarn run build-keycloak-theme || true
+        continue-on-error: true
       
       - name: Configure SSH
         env:
