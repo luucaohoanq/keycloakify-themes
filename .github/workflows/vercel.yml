@@ -8,11 +8,8 @@ on:
       - '.vscode/**'
     
 jobs:
-  build:
+  build-and-deploy:
     runs-on: ubuntu-latest
-    outputs:
-      storybook_status: ${{ steps.build_storybook.outcome }}
-      keycloak_status: ${{ steps.build_keycloak.outcome }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -28,47 +25,13 @@ jobs:
       - name: Install dependencies
         run: yarn install --frozen-lockfile --prefer-offline
       
-      - name: Build Storybook
-        id: build_storybook
+      - name: Build storybook
         run: yarn build-storybook
-      
-      - name: Build Keycloak theme
-        id: build_keycloak
+        
+      - name: Build Keycloak theme (continue on error)
         run: yarn run build-keycloak-theme || true
         continue-on-error: true
-        
-      # Removed the "Create empty dist_keycloak" step as we now handle this conditionally in the deploy job
-        
-      - name: Upload Storybook artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: storybook-static
-          path: storybook-static/
-          retention-days: 1
-          
-      - name: Upload Keycloak artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: dist_keycloak
-          path: dist_keycloak/
-          retention-days: 1
-
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - name: Download Storybook artifact
-        uses: actions/download-artifact@v3
-        with:
-          name: storybook-static
-          path: storybook-static
-          
-      - name: Download Keycloak artifact
-        uses: actions/download-artifact@v3
-        with:
-          name: dist_keycloak
-          path: dist_keycloak
-          
+      
       - name: Configure SSH
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
@@ -89,7 +52,7 @@ jobs:
         run: |
           git clone --depth=1 git@github.com:hoangclw/spkcstb.git production-repo
           
-          # Always copy Storybook static files
+          # Remove and copy directories in one step each
           rm -rf production-repo/storybook-static
           cp -r storybook-static production-repo/
           
@@ -105,6 +68,6 @@ jobs:
           cd production-repo
           git add .
           
-          # Commit with build status info
-          git diff --staged --quiet || git commit -m "Deploy from ${{ github.ref_name }} - ${{ github.sha }} | Storybook: ${{ needs.build.outputs.storybook_status }}, Keycloak: ${{ needs.build.outputs.keycloak_status }}"
+          # More efficient commit logic
+          git diff --staged --quiet || git commit -m "Deploy from ${{ github.ref_name }} - ${{ github.sha }}"
           git push origin main
